@@ -2,16 +2,10 @@
 edition: 2026-01-30
 
 organization:
-  # Name of your organization or company, used to determine the name of the client
-  # and headings.
   name: docker
-  # Link to your API documentation.
-  docs: ''
-  # Contact email for bug reports, questions, and support requests.
-  contact: ''
+  docs: https://docs.docker.com/engine/api/latest/
+  contact: support@docker.com
 
-# `targets` define the output targets and their customization options, such as
-# whether to emit the Node SDK and what its package name should be.
 targets:
   ruby:
     edition: ruby.2025-10-08
@@ -20,111 +14,106 @@ targets:
     publish:
       rubygems: false
 
-# `environments` are a map of the name of the environment (e.g. "sandbox",
-# "production") to the corresponding url to use.
 environments:
-  production: https://petstore3.swagger.io/api/v3
+  production: http://localhost:2375
 
-# `resources` define the structure and organization for your API, such as how
-# methods and models are grouped together and accessed. See the [configuration
-# guide] for more information.
-#
-# [configuration guide]: https://www.stainless.com/docs/guides/configure#resources
 resources:
-  pets:
-    # Configure the models--named types--defined in the resource. Each key in the
-    # object is the name of the model and the value is either the name of a schema in
-    # `#/components/schemas` or an object with more detail.
-    #
-    # [reference]: https://www.stainless.com/docs/reference/config#model
+  auth:
     models:
-      pet: '#/components/schemas/Pet'
-      category: '#/components/schemas/Category'
-    # Configure the methods defined in this resource. Each key in the object is the
-    # name of the method and the value is either an endpoint (for example, `get /foo`)
-    # or an object with more detail.
-    #
-    # [reference]: https://www.stainless.com/docs/reference/config#method
+      auth_response: '#/components/schemas/AuthResponse'
     methods:
-      update: put /pet
-      create: post /pet
-      find_by_status: get /pet/findByStatus
-      find_by_tags: get /pet/findByTags
-      retrieve: get /pet/{petId}
-      update_by_id: post /pet/{petId}
-      delete: delete /pet/{petId}
-      upload_image:
-        endpoint: post /pet/{petId}/uploadImage
-        body_param_name: image
+      login: post /auth
 
-  store:
+  system:
     methods:
-      list_inventory: get /store/inventory
-    # Subresources define resources that are nested within another for more powerful
-    # logical groupings, e.g. `cards.payments`.
-    subresources:
-      orders:
-        methods:
-          create: post /store/order
-          retrieve: get /store/order/{orderId}
-          delete: delete /store/order/{orderId}
+      ping: get /_ping
+      info: get /info
+      version: get /version
 
-  users:
+  containers:
     models:
-      user: User
+      container: '#/components/schemas/ContainerInspectResponse'
+      create_response: '#/components/schemas/ContainerCreateResponse'
+      config: '#/components/schemas/ContainerConfig'
+      summary: '#/components/schemas/ContainerSummary'
     methods:
-      create: post /user
-      create_with_list:
-        endpoint: post /user/createWithList
-        body_param_name: items
-      login: get /user/login
-      logout: get /user/logout
-      retrieve: get /user/{username}
-      update: put /user/{username}
-      delete: delete /user/{username}
+      list: get /containers/json
+      create:
+        endpoint: post /containers/create
+        body_param_name: config
+      inspect: get /containers/{id}/json
+      start: post /containers/{id}/start
+      stop: post /containers/{id}/stop
+      kill: post /containers/{id}/kill
+      delete: delete /containers/{id}
+      logs: get /containers/{id}/logs
+
+  images:
+    models:
+      image: '#/components/schemas/ImageInspect'
+      summary: '#/components/schemas/ImageSummary'
+    methods:
+      list: get /images/json
+      inspect: get /images/{name}/json
+      delete: delete /images/{name}
+      search: post /images/search
+      pull: post /images/create
+
+  networks:
+    models:
+      network: '#/components/schemas/Network'
+      summary: '#/components/schemas/NetworkSummary'
+    methods:
+      list: get /networks
+      create: post /networks/create
+      inspect: get /networks/{id}
+      delete: delete /networks/{id}
+
+  volumes:
+    models:
+      volume: '#/components/schemas/Volume'
+      create_request: '#/components/schemas/VolumeCreateRequest'
+    methods:
+      list: get /volumes
+      create:
+        endpoint: post /volumes/create
+        body_param_name: create_request
+      inspect: get /volumes/{name}
+      delete: delete /volumes/{name}
+
+  services:
+    models:
+      service: '#/components/schemas/Service'
+      spec: '#/components/schemas/ServiceSpec'
+    methods:
+      list: get /services
+      create:
+        endpoint: post /services/create
+        body_param_name: spec
+      inspect: get /services/{id}
+      delete: delete /services/{id}
 
   $shared:
     models:
-      order: '#/components/schemas/Order'
+      error: '#/components/schemas/ErrorResponse'
 
 settings:
-  # All generated integration tests that hit the prism mock http server are marked
-  # as skipped. Removing this setting or setting it to false enables tests, but
-  # doing so may result in test failures due to bugs in the test server.
-  #
-  # [prism mock http server]: https://stoplight.io/open-source/prism
   disable_mock_tests: true
   license: Apache-2.0
 
-# `client_settings` define settings for the API client, such as extra constructor
-# arguments (used for authentication), retry behavior, idempotency, etc.
-client_settings:
-  opts:
-    api_key:
-      type: string
-      auth:
-        security_scheme: api_key
-      read_env: PETSTORE_API_KEY
-
-# `query_settings` determines how complex queries (nested objects, arrays) are
-# serialized.
 query_settings:
   nested_format: brackets
   array_format: comma
 
-# `readme` is used to configure the code snippets that will be rendered in the
-# README.md of various SDKs. In particular, you can change the `headline`
-# snippet's endpoint and the arguments to call it with.
 readme:
   example_requests:
     default:
       type: request
-      endpoint: get /store/inventory
+      endpoint: get /containers/json
       params: {}
     headline:
       type: request
-      endpoint: post /store/order
+      endpoint: post /containers/create
       params:
-        petId: 1
-        quantity: 1
-        status: placed
+        Image: alpine:latest
+        name: sample-container
