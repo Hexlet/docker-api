@@ -1,0 +1,10 @@
+{
+  "project": "docker",
+  "openapi_spec": "../schemas/openapi-v3.yaml",
+  "stainless_config": "stainless.yml",
+  "targets": {
+    "openapi": {
+      "output_path": "../sdks/docker-ruby"
+    }
+  }
+}
