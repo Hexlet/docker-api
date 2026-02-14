@@ -43,5 +43,6 @@ using TypeSpec.OpenAPI;
 @info(#{
   version: "1.53",
 })
+@server("https://localhost:2376", "Docker Engine (TLS)")
 @server("http://localhost:2375", "Docker Engine")
 namespace DockerEngine;

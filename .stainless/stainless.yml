@@ -16,6 +16,7 @@ targets:
 
 environments:
   production: http://localhost:2375
+  production_tls: https://localhost:2376
 
 resources:
   auth:
