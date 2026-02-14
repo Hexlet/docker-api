@@ -84,7 +84,7 @@ resources:
   images:
     models:
       image: '#/components/schemas/ImageInspect'
-      summary: '#/components/schemas/ImageSummary'
+      image_summary: '#/components/schemas/ImageSummary'
       history_item: '#/components/schemas/ImageHistoryResponseItem'
       delete_item: '#/components/schemas/ImageDeleteResponseItem'
     methods:
@@ -107,8 +107,8 @@ resources:
   networks:
     models:
       network: '#/components/schemas/Network'
-      summary: '#/components/schemas/NetworkSummary'
-      create_response: '#/components/schemas/NetworkCreateResponse'
+      network_summary: '#/components/schemas/NetworkSummary'
+      network_create_response: '#/components/schemas/NetworkCreateResponse'
       connect_request: '#/components/schemas/NetworkConnectRequest'
       disconnect_request: '#/components/schemas/NetworkDisconnectRequest'
     methods:
@@ -138,9 +138,9 @@ resources:
   services:
     models:
       service: '#/components/schemas/Service'
-      spec: '#/components/schemas/ServiceSpec'
-      create_response: '#/components/schemas/ServiceCreateResponse'
-      update_response: '#/components/schemas/ServiceUpdateResponse'
+      service_spec: '#/components/schemas/ServiceSpec'
+      service_create_response: '#/components/schemas/ServiceCreateResponse'
+      service_update_response: '#/components/schemas/ServiceUpdateResponse'
     methods:
       list: get /services
       create:
@@ -155,8 +155,8 @@ resources:
 
   configs:
     models:
-      config: '#/components/schemas/Config'
-      spec: '#/components/schemas/ConfigSpec'
+      config_object: '#/components/schemas/Config'
+      config_spec: '#/components/schemas/ConfigSpec'
     methods:
       list: get /configs
       create:
@@ -171,7 +171,7 @@ resources:
   secrets:
     models:
       secret: '#/components/schemas/Secret'
-      spec: '#/components/schemas/SecretSpec'
+      secret_spec: '#/components/schemas/SecretSpec'
     methods:
       list: get /secrets
       create:
@@ -186,7 +186,7 @@ resources:
   nodes:
     models:
       node: '#/components/schemas/Node'
-      spec: '#/components/schemas/NodeSpec'
+      node_spec: '#/components/schemas/NodeSpec'
     methods:
       list: get /nodes
       inspect: get /nodes/{id}
@@ -198,7 +198,7 @@ resources:
   swarm:
     models:
       swarm: '#/components/schemas/Swarm'
-      spec: '#/components/schemas/SwarmSpec'
+      swarm_spec: '#/components/schemas/SwarmSpec'
     methods:
       inspect: get /swarm
       init: post /swarm/init
@@ -213,7 +213,7 @@ resources:
   tasks:
     models:
       task: '#/components/schemas/Task'
-      spec: '#/components/schemas/TaskSpec'
+      task_spec: '#/components/schemas/TaskSpec'
     methods:
       list: get /tasks
       inspect: get /tasks/{id}
