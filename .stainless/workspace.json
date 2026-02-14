@@ -1,6 +1,6 @@
 {
   "project": "docker",
-  "openapi_spec": "../schemas/openapi-v3.yaml",
+  "openapi_spec": "../tsp-output/@typespec/openapi3/openapi.yaml",
   "stainless_config": "stainless.yml",
   "targets": {
     "openapi": {
