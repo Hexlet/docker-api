@@ -25,10 +25,15 @@ resources:
       login: post /auth
 
   system:
+    models:
+      info: '#/components/schemas/SystemInfo'
+      version: '#/components/schemas/SystemVersion'
     methods:
       ping: get /_ping
       info: get /info
       version: get /version
+      events: get /events
+      data_usage: get /system/df
 
   containers:
     models:
@@ -36,6 +41,11 @@ resources:
       create_response: '#/components/schemas/ContainerCreateResponse'
       config: '#/components/schemas/ContainerConfig'
       summary: '#/components/schemas/ContainerSummary'
+      top_response: '#/components/schemas/ContainerTopResponse'
+      update_response: '#/components/schemas/ContainerUpdateResponse'
+      wait_response: '#/components/schemas/ContainerWaitResponse'
+      stats_response: '#/components/schemas/ContainerStatsResponse'
+      filesystem_change: '#/components/schemas/FilesystemChange'
     methods:
       list: get /containers/json
       create:
@@ -47,32 +57,74 @@ resources:
       kill: post /containers/{id}/kill
       delete: delete /containers/{id}
       logs: get /containers/{id}/logs
+      top: get /containers/{id}/top
+      changes: get /containers/{id}/changes
+      stats: get /containers/{id}/stats
+      resize: post /containers/{id}/resize
+      restart: post /containers/{id}/restart
+      pause: post /containers/{id}/pause
+      unpause: post /containers/{id}/unpause
+      rename: post /containers/{id}/rename
+      update: post /containers/{id}/update
+      wait: post /containers/{id}/wait
+      export: get /containers/{id}/export
+      attach: post /containers/{id}/attach
+      archive: get /containers/{id}/archive
+      prune: post /containers/prune
+      exec: post /containers/{id}/exec
+
+  exec:
+    models:
+      inspect_response: '#/components/schemas/ProcessConfig'
+    methods:
+      inspect: get /exec/{id}/json
+      start: post /exec/{id}/start
+      resize: post /exec/{id}/resize
 
   images:
     models:
       image: '#/components/schemas/ImageInspect'
       summary: '#/components/schemas/ImageSummary'
+      history_item: '#/components/schemas/ImageHistoryResponseItem'
+      delete_item: '#/components/schemas/ImageDeleteResponseItem'
     methods:
       list: get /images/json
       inspect: get /images/{name}/json
       delete: delete /images/{name}
-      search: post /images/search
+      search: get /images/search
       pull: post /images/create
+      history: get /images/{name}/history
+      push: post /images/{name}/push
+      tag: post /images/{name}/tag
+      get: get /images/{name}/get
+      get_all: get /images/get
+      load: post /images/load
+      prune: post /images/prune
+      build: post /build
+      build_prune: post /build/prune
+      commit: post /commit
 
   networks:
     models:
       network: '#/components/schemas/Network'
       summary: '#/components/schemas/NetworkSummary'
+      create_response: '#/components/schemas/NetworkCreateResponse'
+      connect_request: '#/components/schemas/NetworkConnectRequest'
+      disconnect_request: '#/components/schemas/NetworkDisconnectRequest'
     methods:
       list: get /networks
       create: post /networks/create
       inspect: get /networks/{id}
       delete: delete /networks/{id}
+      connect: post /networks/{id}/connect
+      disconnect: post /networks/{id}/disconnect
+      prune: post /networks/prune
 
   volumes:
     models:
       volume: '#/components/schemas/Volume'
       create_request: '#/components/schemas/VolumeCreateRequest'
+      list_response: '#/components/schemas/VolumeListResponse'
     methods:
       list: get /volumes
       create:
@@ -80,11 +132,15 @@ resources:
         body_param_name: create_request
       inspect: get /volumes/{name}
       delete: delete /volumes/{name}
+      update: put /volumes/{name}
+      prune: post /volumes/prune
 
   services:
     models:
       service: '#/components/schemas/Service'
       spec: '#/components/schemas/ServiceSpec'
+      create_response: '#/components/schemas/ServiceCreateResponse'
+      update_response: '#/components/schemas/ServiceUpdateResponse'
     methods:
       list: get /services
       create:
@@ -92,6 +148,99 @@ resources:
         body_param_name: spec
       inspect: get /services/{id}
       delete: delete /services/{id}
+      update:
+        endpoint: post /services/{id}/update
+        body_param_name: spec
+      logs: get /services/{id}/logs
+
+  configs:
+    models:
+      config: '#/components/schemas/Config'
+      spec: '#/components/schemas/ConfigSpec'
+    methods:
+      list: get /configs
+      create:
+        endpoint: post /configs/create
+        body_param_name: spec
+      inspect: get /configs/{id}
+      delete: delete /configs/{id}
+      update:
+        endpoint: post /configs/{id}/update
+        body_param_name: spec
+
+  secrets:
+    models:
+      secret: '#/components/schemas/Secret'
+      spec: '#/components/schemas/SecretSpec'
+    methods:
+      list: get /secrets
+      create:
+        endpoint: post /secrets/create
+        body_param_name: spec
+      inspect: get /secrets/{id}
+      delete: delete /secrets/{id}
+      update:
+        endpoint: post /secrets/{id}/update
+        body_param_name: spec
+
+  nodes:
+    models:
+      node: '#/components/schemas/Node'
+      spec: '#/components/schemas/NodeSpec'
+    methods:
+      list: get /nodes
+      inspect: get /nodes/{id}
+      delete: delete /nodes/{id}
+      update:
+        endpoint: post /nodes/{id}/update
+        body_param_name: spec
+
+  swarm:
+    models:
+      swarm: '#/components/schemas/Swarm'
+      spec: '#/components/schemas/SwarmSpec'
+    methods:
+      inspect: get /swarm
+      init: post /swarm/init
+      join: post /swarm/join
+      leave: post /swarm/leave
+      update:
+        endpoint: post /swarm/update
+        body_param_name: spec
+      unlock: post /swarm/unlock
+      unlock_key: get /swarm/unlockkey
+
+  tasks:
+    models:
+      task: '#/components/schemas/Task'
+      spec: '#/components/schemas/TaskSpec'
+    methods:
+      list: get /tasks
+      inspect: get /tasks/{id}
+      logs: get /tasks/{id}/logs
+
+  plugins:
+    models:
+      plugin: '#/components/schemas/Plugin'
+      privilege: '#/components/schemas/PluginPrivilege'
+    methods:
+      list: get /plugins
+      inspect: get /plugins/{name}/json
+      delete: delete /plugins/{name}
+      enable: post /plugins/{name}/enable
+      disable: post /plugins/{name}/disable
+      create: post /plugins/create
+      pull: post /plugins/pull
+      push: post /plugins/{name}/push
+      set: post /plugins/{name}/set
+      upgrade: post /plugins/{name}/upgrade
+      privileges: get /plugins/privileges
+
+  distribution:
+    models:
+      inspect: '#/components/schemas/DistributionInspect'
+    methods:
+      inspect: get /distribution/{name}/json
 
   $shared:
     models:
