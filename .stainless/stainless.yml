@@ -9,7 +9,7 @@ organization:
 targets:
   ruby:
     edition: ruby.2025-10-08
-    gem_name: docker-engine
+    gem_name: docker-engine-ruby
     production_repo: Hexlet/docker-ruby
     publish:
       rubygems: false
