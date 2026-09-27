@@ -392,13 +392,22 @@ model SignerIdentity {
   SourceRepositoryVisibilityAtSigning?: string;
 }
 
+/** One line of the `/build` progress stream. */
 model BuildInfo {
   id?: string;
   stream?: string;
+  #deprecated "Use errorDetail."
+  error?: string;
   errorDetail?: ErrorDetail;
   status?: string;
+  #deprecated "Use progressDetail."
+  progress?: string;
   progressDetail?: ProgressDetail;
-  aux?: ImageID;
+  /**
+   * The classic builder sends the image ID; BuildKit sends a base64 protobuf
+   * `StatusResponse` when `id` is `moby.buildkit.trace`.
+   */
+  aux?: ImageID | string;
 }
 
 /** BuildCache contains information about a build cache record. */
@@ -449,17 +458,34 @@ model ImageID {
   ID?: string;
 }
 
+/** One line of the `/images/create` progress stream. */
 model CreateImageInfo {
   id?: string;
+  #deprecated "Use errorDetail."
+  error?: string;
   errorDetail?: ErrorDetail;
   status?: string;
+  #deprecated "Use progressDetail."
+  progress?: string;
   progressDetail?: ProgressDetail;
 }
 
+/** One line of the `/images/{name}/push` progress stream. */
 model PushImageInfo {
+  id?: string;
+  #deprecated "Use errorDetail."
+  error?: string;
   errorDetail?: ErrorDetail;
   status?: string;
+  #deprecated "Use progressDetail."
+  progress?: string;
   progressDetail?: ProgressDetail;
+  /** The pushed tag, its digest and size. */
+  aux?: {
+    Tag?: string;
+    Digest?: string;
+    Size?: int64;
+  };
 }
 
 /**
