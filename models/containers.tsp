@@ -1299,3 +1299,13 @@ alias GenericResources = {
     Value?: int64;
   };
 }[];
+
+/**
+ * Тело создания контейнера: конфиг контейнера и в том же объекте настройки хоста и сети,
+ * как в `ContainerCreate` Engine API.
+ */
+model ContainerCreateRequest {
+  ...ContainerConfig;
+  HostConfig?: HostConfig;
+  NetworkingConfig?: NetworkingConfig;
+}

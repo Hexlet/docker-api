@@ -17,7 +17,7 @@ op ContainerList(@query all?: boolean, @query limit?: int32, @query size?: boole
 /** Create a container */
 @post
 @route("/containers/create")
-op ContainerCreate(@query name?: string, @query platform?: string, @body body: ContainerConfig): ContainerCreateResponse;
+op ContainerCreate(@query name?: string, @query platform?: string, @body body: ContainerCreateRequest): ContainerCreateResponse;
 
 /** Inspect a container */
 @get
