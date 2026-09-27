@@ -1,4 +1,5 @@
 import "@typespec/http";
+import "@typespec/http/streams";
 import "@typespec/openapi";
 
 import "../models/common.tsp";
@@ -6,6 +7,7 @@ import "../models/containers.tsp";
 import "../models/images.tsp";
 
 using TypeSpec.Http;
+using TypeSpec.Http.Streams;
 using TypeSpec.OpenAPI;
 
 namespace DockerEngine;
@@ -18,7 +20,7 @@ op ImageList(@query all?: boolean, @query filters?: string, @query("shared-size"
 /** Build an image */
 @post
 @route("/build")
-op ImageBuild(@query dockerfile?: string, @query t?: string, @query extrahosts?: string, @query remote?: string, @query q?: boolean, @query nocache?: boolean, @query cachefrom?: string, @query pull?: string, @query rm?: boolean, @query forcerm?: boolean, @query memory?: int32, @query memswap?: int32, @query cpushares?: int32, @query cpusetcpus?: string, @query cpuperiod?: int32, @query cpuquota?: int32, @query buildargs?: string, @query shmsize?: int32, @query squash?: boolean, @query labels?: string, @query networkmode?: string, @header("Content-type") Content_type?: "application/x-tar", @header("X-Registry-Config") X_Registry_Config?: string, @query platform?: string, @query target?: string, @query outputs?: string, @query version?: "1" | "2", @body body: bytes): void;
+op ImageBuild(@query dockerfile?: string, @query t?: string, @query extrahosts?: string, @query remote?: string, @query q?: boolean, @query nocache?: boolean, @query cachefrom?: string, @query pull?: string, @query rm?: boolean, @query forcerm?: boolean, @query memory?: int32, @query memswap?: int32, @query cpushares?: int32, @query cpusetcpus?: string, @query cpuperiod?: int32, @query cpuquota?: int32, @query buildargs?: string, @query shmsize?: int32, @query squash?: boolean, @query labels?: string, @query networkmode?: string, @header("Content-type") Content_type?: "application/x-tar", @header("X-Registry-Config") X_Registry_Config?: string, @query platform?: string, @query target?: string, @query outputs?: string, @query version?: "1" | "2", @body body: bytes): HttpStream<BuildInfo, "application/json">;
 
 /** Delete builder cache */
 @post
@@ -31,7 +33,7 @@ op BuildPrune(@query("reserved-space") reserved_space?: int64, @query("max-used-
 /** Create an image */
 @post
 @route("/images/create")
-op ImageCreate(@query fromImage?: string, @query fromSrc?: string, @query repo?: string, @query tag?: string, @query message?: string, @header("X-Registry-Auth") X_Registry_Auth?: string, @query changes?: string[], @query platform?: string, @body body: string): void;
+op ImageCreate(@query fromImage?: string, @query fromSrc?: string, @query repo?: string, @query tag?: string, @query message?: string, @header("X-Registry-Auth") X_Registry_Auth?: string, @query changes?: string[], @query platform?: string, @body body: string): HttpStream<CreateImageInfo, "application/json">;
 
 /** Inspect an image */
 @get
@@ -46,7 +48,7 @@ op ImageHistory(@path name: string, @query platform?: string): ImageHistoryRespo
 /** Push an image */
 @post
 @route("/images/{name}/push")
-op ImagePush(@path name: string, @query tag?: string, @query platform?: string, @header("X-Registry-Auth") X_Registry_Auth: string): void;
+op ImagePush(@path name: string, @query tag?: string, @query platform?: string, @header("X-Registry-Auth") X_Registry_Auth: string): HttpStream<PushImageInfo, "application/json">;
 
 /** Tag an image */
 @post
